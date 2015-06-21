@@ -1,25 +1,66 @@
-package trab2SO;
-
-public class Barbearia extends Exception {
-	final int numeroBarbeiros = 3;
-	final int numeroCadeirasFila = 5;
+public class Barbearia {
+	final int numeroBarbeiros;
+	final int numeroCadeirasFila;
 	int totalBarbeiros = 0;
 	int totalFila = 0;
+	Fifo barbeiros;
+	Fifo clientes;
 	
-	public void cortarCabelinho(Cliente c) throws Exception {  
-        synchronized(this) {  
-            if (this.totalBarbeiros == this.numeroBarbeiros){
-            	if (this.totalFila == this.numeroCadeirasFila){ 
-            		throw new Exception("Fila cheia! Vou embora!");
-            	} else {
-            		this.totalFila++;
-            		wait();
-            	}
-            } else {
-            	this.totalBarbeiros++;
-            	c.start();
-            } 
-        }  
+	public Barbearia (int nmrBarbeiros, int nmrCadeiras){
+		this.numeroBarbeiros = nmrBarbeiros;
+		this.numeroCadeirasFila = nmrCadeiras;
+		this.barbeiros = new Fifo(this.numeroBarbeiros);
+		this.clientes = new Fifo(this.numeroCadeirasFila);
+		
+		for(int i=0; i< this.numeroBarbeiros; i++){
+			this.barbeiros.put(new Barbeiro(this.clientes));
+		}
+
+	}
+
+
+	public void cortarCabelinho(Cliente c) throws Exception {    
+		if (!filaCheia()) {
+			clientes.put(c);
+
+			synchronized(this){
+				this.totalFila++;
+			}
+
+			if(barbeiroLivre()){
+				Barbeiro b = (Barbeiro) barbeiros.get();
+				b.notify();
+
+
+				synchronized(this){
+					if(this.totalFila > 0)
+						this.totalFila--;
+				}
+
+				barbeiros.put(b);
+
+			}
+		} else {
+			throw new Exception("Fila Cheia");
+		}
+
 	} 
+
+	synchronized boolean filaCheia() {
+		if(totalFila < numeroCadeirasFila){
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	synchronized boolean barbeiroLivre() {
+		if(totalBarbeiros < numeroBarbeiros){
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 
 }
