@@ -1,14 +1,18 @@
 public class Trab2 {
 	public static void main(String[] args) {
-		Barbearia barbearia = new Barbearia(3, 5);
-		
-		for(int i=0; i< Math.random() * 10; i++){
-			try{
-				barbearia.cortarCabelinho(new Cliente(i));
-			} catch (Exception e){
-				System.out.println(e);
-			}
-		}
+		Fifo filaClientes = new Fifo();
+		int maximoFila = 5;
+
+		Barbearia barbearia = new Barbearia(filaClientes, maximoFila);
+
+		Barbeiro barbeiro1 = new Barbeiro(filaClientes, 1);
+		Barbeiro barbeiro2 = new Barbeiro(filaClientes, 2);
+		Barbeiro barbeiro3 = new Barbeiro(filaClientes, 3);
+
+		barbearia.start();
+		barbeiro1.start();
+		barbeiro2.start();
+		barbeiro3.start();
 		
 	}
 }

@@ -1,22 +1,38 @@
 public class Barbeiro extends Thread {
-	Fifo clientes;
-	Cliente cliente;
-
-	public Barbeiro (Fifo clientes){
-		this.clientes = clientes;
+	private Fifo filaClientes;
+	private int id;
+	
+	public Barbeiro(Fifo filaClientes, int id){
+		this.filaClientes = filaClientes;
+		this.id = id;
 	}
 
-	public void run(){
-		synchronized(this){
-			this.cliente = (Cliente) clientes.get();
+	public void cortarCabelinho() {
+		synchronized (filaClientes) {
+			if (filaClientes.getFila().size() > 0){
+				Cliente cliente = (Cliente) filaClientes.getFila().remove(0);
+				cliente.cortarCabelinho(id);
+			} else {
+				try{
+					System.out.println("Barbeiro " + Integer.toString(id) + " foi dormir.");
+					filaClientes.wait();
+				} catch (InterruptedException e) {  
+					e.printStackTrace();  
+				}
+			}
 		}
-
-		cliente.notify();
-
-		try {
-			wait();
-		} catch (InterruptedException e) {
-			System.out.println("Erro ao dormir barbeiro");
+	}
+	
+	public void run(){
+		while(true){
+			this.cortarCabelinho();
+			
+			try {  
+				Thread.sleep((int)(Math.random() * 5000));  
+			}  
+			catch (InterruptedException e) {  
+				e.printStackTrace();  
+			}
 		}
 	}
 
