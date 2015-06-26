@@ -1,9 +1,8 @@
 public class Trab2 {
 	public static void main(String[] args) {
-		Fifo filaClientes = new Fifo();
-		int maximoFila = 5;
+		Fifo filaClientes = new Fifo(5);
 
-		Barbearia barbearia = new Barbearia(filaClientes, maximoFila);
+		Barbearia barbearia = new Barbearia(filaClientes);
 
 		Barbeiro barbeiro1 = new Barbeiro(filaClientes, 1);
 		Barbeiro barbeiro2 = new Barbeiro(filaClientes, 2);

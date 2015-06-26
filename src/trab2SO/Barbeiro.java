@@ -11,7 +11,8 @@ public class Barbeiro extends Thread {
 		synchronized (filaClientes) {
 			if (filaClientes.getFila().size() > 0){
 				Cliente cliente = (Cliente) filaClientes.getFila().remove(0);
-				cliente.cortarCabelinho(id);
+				cliente.cortarCabelinho(this.id);
+				
 			} else {
 				try{
 					System.out.println("Barbeiro " + Integer.toString(id) + " foi dormir.");
@@ -28,7 +29,7 @@ public class Barbeiro extends Thread {
 			this.cortarCabelinho();
 			
 			try {  
-				Thread.sleep((int)(Math.random() * 5000));  
+				Thread.sleep((int)(Math.random() * 10000));  
 			}  
 			catch (InterruptedException e) {  
 				e.printStackTrace();  

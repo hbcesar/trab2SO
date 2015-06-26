@@ -1,32 +1,23 @@
 public class Barbearia extends Thread {
 	private Fifo filaClientes;
-	private int maximoFila;
+	private int cliente = 0;
 	
-	public Barbearia(Fifo filaClientes, int maximoFila){
+	public Barbearia(Fifo filaClientes){
 		this.filaClientes = filaClientes;
-		this.maximoFila = maximoFila;
 	}
 	
-	public void novoCliente(){
-		synchronized (filaClientes){
-			if(filaClientes.getFila().size() >= maximoFila){
-				System.out.println("Sou o cliente " + Integer.toString((int)(Math.random() * 100))
-						+ " vou embora pois nao tem espaco na fila!");
-			} else{
-				Cliente cliente = new Cliente((int)(Math.random() * 100));
-				filaClientes.getFila().add(cliente);
-
-				filaClientes.notifyAll();
-			}
-		}
+	public void novoCliente(int clienteId){
+		Cliente cliente = new Cliente(filaClientes, clienteId);
+		cliente.start();
+		
 	}
 
 	public void run(){
 		while(true){
-			this.novoCliente();
+			this.novoCliente(cliente++);
 
 			try {  
-				Thread.sleep((int)(Math.random() * 5000));  
+				Thread.sleep(1000);  
 			}  
 			catch (InterruptedException e) {  
 				e.printStackTrace();  
